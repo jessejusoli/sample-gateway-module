@@ -1,28 +1,7 @@
 <?php
 /**
- * WHMCS Sample Payment Gateway Module
- *
- * Payment Gateway modules allow you to integrate payment solutions with the
- * WHMCS platform.
- *
- * This sample file demonstrates how a payment gateway module for WHMCS should
- * be structured and all supported functionality it can contain.
- *
- * Within the module itself, all functions must be prefixed with the module
- * filename, followed by an underscore, and then the function name. For this
- * example file, the filename is "gatewaymodule" and therefore all functions
- * begin "gatewaymodule_".
- *
- * If your module or third party API does not support a given function, you
- * should not define that function within your module. Only the _config
- * function is required.
- *
- * For more information, please refer to the online documentation.
- *
- * @see https://developers.whmcs.com/payment-gateways/
- *
- * @copyright Copyright (c) WHMCS Limited 2017
- * @license http://www.whmcs.com/license/ WHMCS Eula
+ * WHMCS Goleto Payment Gateway Module
+ * Version 1.1 = (0.0.0.1-build-1)
  */
 
 if (!defined("WHMCS")) {
@@ -42,7 +21,7 @@ if (!defined("WHMCS")) {
 function gatewaymodule_MetaData()
 {
     return array(
-        'DisplayName' => 'Sample Payment Gateway Module',
+        'DisplayName' => 'WHMCS Goleto',
         'APIVersion' => '1.1', // Use API Version 1.1
         'DisableLocalCredtCardInput' => true,
         'TokenisedStorage' => false,
@@ -76,7 +55,7 @@ function gatewaymodule_config()
         // defined here for backwards compatibility
         'FriendlyName' => array(
             'Type' => 'System',
-            'Value' => 'Sample Third Party Payment Gateway Module',
+            'Value' => 'WHMCS Goleto Payment Gateway Module',
         ),
         // a text field type allows for single line text input
         'accountID' => array(
@@ -84,7 +63,7 @@ function gatewaymodule_config()
             'Type' => 'text',
             'Size' => '25',
             'Default' => '',
-            'Description' => 'Enter your account ID here',
+            'Description' => 'Enter your account ID (email), here',
         ),
         // a password field type allows for masked text input
         'secretKey' => array(
@@ -92,7 +71,7 @@ function gatewaymodule_config()
             'Type' => 'password',
             'Size' => '25',
             'Default' => '',
-            'Description' => 'Enter secret key here',
+            'Description' => 'Enter secret key(TOKEN), here',
         ),
         // the yesno field type displays a single checkbox option
         'testMode' => array(
@@ -102,25 +81,25 @@ function gatewaymodule_config()
         ),
         // the dropdown field type renders a select menu of options
         'dropdownField' => array(
-            'FriendlyName' => 'Dropdown Field',
+            'FriendlyName' => 'API Version',
             'Type' => 'dropdown',
             'Options' => array(
-                'option1' => 'Display Value 1',
-                'option2' => 'Second Option',
-                'option3' => 'Another Option',
+                'option1' => '1',
+                'option2' => '2',
+                'option3' => '3',
             ),
             'Description' => 'Choose one',
         ),
         // the radio field type displays a series of radio button options
         'radioField' => array(
-            'FriendlyName' => 'Radio Field',
+            'FriendlyName' => 'Currency',
             'Type' => 'radio',
-            'Options' => 'First Option,Second Option,Third Option',
+            'Options' => 'USD,EUR,BRL,BTC,NRU,APP',
             'Description' => 'Choose your option!',
         ),
         // the textarea field type allows for multi-line text input
         'textareaField' => array(
-            'FriendlyName' => 'Textarea Field',
+            'FriendlyName' => 'Payment description',
             'Type' => 'textarea',
             'Rows' => '3',
             'Cols' => '60',
