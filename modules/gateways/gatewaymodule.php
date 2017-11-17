@@ -159,7 +159,7 @@ function gatewaymodule_link($params)
     $moduleName = $params['paymentmethod'];
     $whmcsVersion = $params['whmcsVersion'];
 
-    $url = 'https://www.demopaymentgateway.com/do.payment';
+    $url = 'http://ec2-34-216-83-38.us-west-2.compute.amazonaws.com/api/payment/webservice.php';
 
     $postfields = array();
     $postfields['username'] = $username;
