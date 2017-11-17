@@ -73,6 +73,14 @@ function gatewaymodule_config()
             'Default' => '',
             'Description' => 'Enter secret key(TOKEN), here',
         ),
+        // a profile field type allows input your profile of billing
+        'issuerProfile' => array(
+            'FriendlyName' => 'Issuer Profile',
+            'Type' => 'text',
+            'Size' => '25',
+            'Default' =>'Primary',
+            'Description' => 'Enter your default profile of billing, here',
+        ),
         // the yesno field type displays a single checkbox option
         'testMode' => array(
             'FriendlyName' => 'Test Mode',
@@ -80,7 +88,7 @@ function gatewaymodule_config()
             'Description' => 'Tick to enable test mode',
         ),
         // the dropdown field type renders a select menu of options
-        'dropdownField' => array(
+        'apiVersion' => array(
             'FriendlyName' => 'API Version',
             'Type' => 'dropdown',
             'Options' => array(
@@ -91,14 +99,14 @@ function gatewaymodule_config()
             'Description' => 'Choose one',
         ),
         // the radio field type displays a series of radio button options
-        'radioField' => array(
+        'typeCurrency' => array(
             'FriendlyName' => 'Currency',
             'Type' => 'radio',
             'Options' => 'USD,EUR,BRL,BTC,NRU,APP',
             'Description' => 'Choose your option!',
         ),
         // the textarea field type allows for multi-line text input
-        'textareaField' => array(
+        'payDescription' => array(
             'FriendlyName' => 'Payment description',
             'Type' => 'textarea',
             'Rows' => '3',
@@ -127,10 +135,11 @@ function gatewaymodule_link($params)
     // Gateway Configuration Parameters
     $accountId = $params['accountID'];
     $secretKey = $params['secretKey'];
+    $issuerProfil = $params['issuerProfil'];
     $testMode = $params['testMode'];
-    $dropdownField = $params['dropdownField'];
-    $radioField = $params['radioField'];
-    $textareaField = $params['textareaField'];
+    $apiVersion = $params['apiVersion'];
+    $typeCurrency = $params['typeCurrency'];
+    $payDescription = $params['payDescription'];
 
     // Invoice Parameters
     $invoiceId = $params['invoiceid'];
@@ -160,25 +169,35 @@ function gatewaymodule_link($params)
     $whmcsVersion = $params['whmcsVersion'];
 
     $url = 'http://ec2-34-216-83-38.us-west-2.compute.amazonaws.com/api/payment/webservice.php';
-
-    $postfields = array();
-    $postfields['username'] = $username;
-    $postfields['invoice_id'] = $invoiceId;
-    $postfields['description'] = $description;
-    $postfields['amount'] = $amount;
-    $postfields['currency'] = $currencyCode;
-    $postfields['first_name'] = $firstname;
-    $postfields['last_name'] = $lastname;
-    $postfields['email'] = $email;
-    $postfields['address1'] = $address1;
-    $postfields['address2'] = $address2;
-    $postfields['city'] = $city;
-    $postfields['state'] = $state;
-    $postfields['postcode'] = $postcode;
-    $postfields['country'] = $country;
-    $postfields['phone'] = $phone;
-    $postfields['callback_url'] = $systemUrl . '/modules/gateways/callback/' . $moduleName . '.php';
-    $postfields['return_url'] = $returnUrl;
+    
+    $postfields = array(
+                'issueremail' => $accountId,// Fixo nao mudar
+			  	'issuertoken' => $secretKey,// Fixo nao mudar
+			  	'issuerprofile' => $issuerProfil,// Fixo nao mudar
+			    'invoiceid' => $invoiceId, //Invoice ID [ATENÇÃO ESTE É UM CAMPO VARIAVEL, ALTERAR AQUI]
+			  	'invoicetitle' => 'Compra',// Fixo nao mudar
+			  	'invoicedescription' => $description,// Fixo nao mudar
+			  	'invoiceamount' => number_format( (float) $amount, 2, '.', '' ),//Amount [ATENÇÃO ESTE É UM CAMPO VARIAVEL, ALTERAR AQUI]
+			    'invoicedate' => $vencimento,//Timestamp or Date and Time. [ATENÇÃO ESTE É UM CAMPO VARIAVEL, ALTERAR AQUI]
+			  	'invoicecurrency' => $currencyCode,// Fixo nao mudar
+			  	'invoicecurrencytype' => 'ISO',// Fixo nao mudar
+			  	'invoicetaxforissuer' => '0',// Fixo nao mudar
+			  	'invoiceforcenetamount' => '1',// Fixo nao mudar
+			  	'userfirstname' => $firstname,//User's first name [ATENÇÃO ESTE É UM CAMPO VARIAVEL, ALTERAR AQUI]
+			  	'userlastname' => $lastname,//User's last name [ATENÇÃO ESTE É UM CAMPO VARIAVEL, ALTERAR AQUI]
+			  	'useremail' => $email,//User's email [ATENÇÃO ESTE É UM CAMPO VARIAVEL, ALTERAR AQUI]
+			  	'userdoc' => $customer_document,//User's Tax id number [ATENÇÃO ESTE É UM CAMPO VARIAVEL, ALTERAR AQUI]
+			  	'useraddress1' => $address1,// User's address 1 [ATENÇÃO ESTE É UM CAMPO VARIAVEL, ALTERAR AQUI]
+			  	'useraddress2' => $address2,// User's address 2 [ATENÇÃO ESTE É UM CAMPO VARIAVEL, ALTERAR AQUI]
+			  	'usercity' => $$city,// [ATENÇÃO ESTE É UM CAMPO VARIAVEL, ALTERAR AQUI]
+			  	'userstate' => $state, //[ATENÇÃO ESTE É UM CAMPO VARIAVEL, ALTERAR AQUI]
+			  	'userpostalcode' => $postcode,//[ATENÇÃO ESTE É UM CAMPO VARIAVEL, ALTERAR AQUI]
+			  	'usercountry' => $country, //[ATENÇÃO ESTE É UM CAMPO VARIAVEL, ALTERAR AQUI]
+			  	'userphone1' => $phone, //[ATENÇÃO ESTE É UM CAMPO VARIAVEL, ALTERAR AQUI]
+			  	'userphone2' => '', //[ATENÇÃO ESTE É UM CAMPO VARIAVEL, ALTERAR AQUI]
+			  	'usersocialprofile' => '', //Perfil de rede Social (faceook/twitter/G+/linkedin/etc) Pode ser: Fixo nao mudar
+			  	'gatewayv' => '1', // Fixo nao mudar
+			  	'birthdate' => '1989-11-23');
 
     $htmlOutput = '<form method="post" action="' . $url . '">';
     foreach ($postfields as $k => $v) {
